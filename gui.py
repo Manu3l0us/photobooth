@@ -12,6 +12,10 @@ except ImportError:
 
 from events import Event
 
+wedding_green = (137,160,44)
+black = (0,0,0)
+
+
 class GuiException(Exception):
     """Custom exception class to handle GUI class errors"""
 
@@ -39,7 +43,7 @@ class GUI_PyGame:
         self.clear()
         self.apply()
 
-    def clear(self, color=(0,0,0)):
+    def clear(self, color=black):
         self.screen.fill(color)
         self.surface_list = []
 
@@ -79,7 +83,7 @@ class GUI_PyGame:
             surface = pygame.transform.flip(surface, True, False)
         self.surface_list.append((surface, offset))
 
-    def show_message(self, msg, color=(0,0,0), bg=(230,230,230), transparency=True, outline=(245,245,245)):
+    def show_message(self, msg, color=black, bg=wedding_green, transparency=False, outline=wedding_green):
         # Choose font
         font = pygame.font.Font(None, 144)
         # Wrap and render text

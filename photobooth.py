@@ -52,6 +52,15 @@ idle_slideshow = True
 # Display time of pictures in the slideshow
 slideshow_display_time = 5
 
+number_of_pictures = 4
+
+shutdown_message =      "Shutting down..."
+hitbutton_message =     "Hit the button!"
+pose_message =          "POSE!\n\nTaking four pictures..."
+processing_message =    "Please wait!\n\nProcessing..."
+exception_message =     "Giving up! Please start over!"
+smile_message =         "S M I L E !!!\n\n"
+
 ###############
 ### Classes ###
 ###############
@@ -137,7 +146,7 @@ class Photobooth:
 
     def teardown(self):
         self.display.clear()
-        self.display.show_message("Shutting down...")
+        self.display.show_message(shutdown_message)
         self.display.apply()
         self.gpio.set_output(self.lamp_channel, 0)
         sleep(0.5)
@@ -151,7 +160,7 @@ class Photobooth:
 
             # Display default message
             self.display.clear()
-            self.display.show_message("Hit the button!")
+            self.display.show_message(hitbutton_message)
             self.display.apply()
 
             # Wait for an event and handle it
@@ -161,7 +170,7 @@ class Photobooth:
     def _run_slideshow(self):
         while True:
             self.camera.set_idle()
-            self.slideshow.display_next("Hit the button!")
+            self.slideshow.display_next(hitbutton_message)
             tic = clock()
             while clock() - tic < self.slideshow_display_time:
                 self.check_and_handle_events()
@@ -343,7 +352,7 @@ class Photobooth:
 
         # Show pose message
         self.display.clear()
-        self.display.show_message("POSE!\n\nTaking four pictures...");
+        self.display.show_message(pose_message);
         self.display.apply()
         sleep(2)
 
@@ -352,8 +361,8 @@ class Photobooth:
         outsize = (int(size[0]/2), int(size[1]/2))
 
         # Take pictures
-        filenames = [i for i in range(4)]
-        for x in range(4):
+        filenames = [i for i in range(number_of_pictures)]
+        for x in range(number_of_pictures):
             # Countdown
             self.show_counter(self.pose_time)
 
@@ -363,7 +372,7 @@ class Photobooth:
                 remaining_attempts = remaining_attempts - 1
 
                 self.display.clear()
-                self.display.show_message("S M I L E !!!\n\n" + str(x+1) + " of 4")
+                self.display.show_message(smile_message + str(x+1) + " of %u" % number_of_pictures)
                 self.display.apply()
 
                 tic = clock()
@@ -380,7 +389,7 @@ class Photobooth:
                             self.display.apply()
                             sleep(5)
                         else:
-                            raise CameraException("Giving up! Please start over!", False)
+                            raise CameraException(exception_message, False)
                     else:
                        raise e
 
@@ -391,7 +400,7 @@ class Photobooth:
 
         # Show 'Wait'
         self.display.clear()
-        self.display.show_message("Please wait!\n\nProcessing...")
+        self.display.show_message(processing_message)
         self.display.apply()
 
         # Assemble them
